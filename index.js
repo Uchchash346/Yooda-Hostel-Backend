@@ -53,6 +53,27 @@ async function run() {
             res.json(result);
         })
 
+        //UPDATE API - Students Information
+        app.put('/students/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateName = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    name: updateName.name,
+                    roll: updateName.roll,
+                    age: updateName.age,
+                    classNo: updateName.classNo,
+                    hallName: updateName.hallName,
+                    activeStatus: updateName.activeStatus
+                },
+            }
+            const result = await studentsCollection.updateOne(filter, updateDoc, options);
+            console.log('Updated students successfully', req);
+            res.json(result);
+        })
+
         // GET API - Food Item
         app.get('/foods', async (req, res) => {
             const cursor = foodCollection.find({});
@@ -95,8 +116,8 @@ async function run() {
             const options = { upsert: true };
             const updateDoc = {
                 $set: {
-                    name : updateName.name,
-                    price : updateName.price
+                    name: updateName.name,
+                    price: updateName.price
                 },
             }
             const result = await foodCollection.updateOne(filter, updateDoc, options);
