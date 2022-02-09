@@ -86,6 +86,23 @@ async function run() {
             console.log("Deleting the food", result);
             res.json(result);
         })
+
+        //UPDATE API - Food Item
+        app.put('/foods/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateName = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    name : updateName.name,
+                    price : updateName.price
+                },
+            }
+            const result = await foodCollection.updateOne(filter, updateDoc, options);
+            console.log('Updated food item successfully', req);
+            res.json(result);
+        })
     }
     finally {
         // await client.close();
