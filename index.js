@@ -18,6 +18,40 @@ async function run() {
         await client.connect();
         const database = client.db("hostel");
         const foodCollection = database.collection("foods");
+        const studentsCollection = database.collection("students");
+
+        // GET API - Students Information
+        app.get('/students', async (req, res) => {
+            const cursor = studentsCollection.find({});
+            const studentLists = await cursor.toArray();
+            res.send(studentLists);
+        })
+
+        app.get('/students/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const displayStudentsInfo = await studentsCollection.findOne(query);
+            console.log('Load User with ID: ', id);
+            res.send(displayStudentsInfo);
+        })
+
+        // POST API - Students Information
+        app.post('/students', async (req, res) => {
+            const newStudent = req.body;
+            const insertStudentInfo = await studentsCollection.insertOne(newStudent);
+            console.log("Add new Students Information", req.body);
+            console.log("Hitting new students information", insertStudentInfo);
+            res.json(insertStudentInfo);
+        })
+
+        //DELETE API - Students Information
+        app.delete('/students/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await studentsCollection.deleteOne(query);
+            console.log("Deleting the food", result);
+            res.json(result);
+        })
 
         // GET API - Food Item
         app.get('/foods', async (req, res) => {
@@ -41,6 +75,15 @@ async function run() {
             const result = await foodCollection.insertOne(newFood);
             console.log("Add new Food Item", req.body);
             console.log("Hitting the new food item", result);
+            res.json(result);
+        })
+
+        //DELETE API - Food Item
+        app.delete('/foods/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await foodCollection.deleteOne(query);
+            console.log("Deleting the food", result);
             res.json(result);
         })
     }
